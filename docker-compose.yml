@@ -29,12 +29,16 @@ services:
 
   # 3. frontend Service
   uphf-frontend:
-    build: ./wiliwili-chat-buddy  # 
+    build:
+      context: ./wiliwili-chat-buddy
+      dockerfile: Dockerfile
     container_name: wiliwili-web-container
     ports:
-      - "8085:80"  
-    depends_on:
-      - uphf-api
-    restart: always
+      - "3000:80"  
+    environment:
+      - NODE_ENV=production
+    # depends_on:
+    #   - uphf-api
+    # restart: always
 volumes:
   mongo_data:
