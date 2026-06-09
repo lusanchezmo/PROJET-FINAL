@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # 1. Database Service (MongoDB)
+  mongo-db:
+    image: mongo:6.0
+    container_name: uphf-mongo-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  # 2. Backend API Service
+  uphf-api:
+    build: ./backend
+    container_name: uphf-rag-container
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongo-db:27017
+    depends_on:
+      - mongo-db
+    volumes:
+      - ./faiss_uphf_index:/app/faiss_uphf_index
+    restart: always
+
+  # 3. frontend Service
+  uphf-frontend:
+    build: ./wiliwili-chat-buddy  # 
+    container_name: wiliwili-web-container
+    ports:
+      - "8085:80"  
+    depends_on:
+      - uphf-api
+    restart: always
+volumes:
+  mongo_data:
